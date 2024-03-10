@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>display</title>
+
+    <script id="vshader" type="x-shader/x-vertex">#version 300 es
+        in  vec2 a_position;
+        in  vec4 a_color;
+
+        out vec4 fColor;
+        void main(){
+            gl_Position = vec4(a_position, 0.0, 1.0);
+            gl_PointSize = 10.0;
+            fColor = a_color;
+        }
+    </script>
+
+    <script id="fshader" type="x-shader/x-fragment">#version 300 es
+        precision mediump float;
+
+        in  vec4 fColor;
+        out vec4 fragColor;
+        void main(){
+            fragColor = vec4(1.0, 1.0, 1.0, 1.0);
+        }
+    </script>
+
+    <script type="text/javascript" src="../resources/libs/webgl-utils.js"></script>
+    <script type="text/javascript" src="../resources/libs/webgl-primitives.js"></script>
+    <script type="text/javascript" src="bezier.js"></script>
+</head>
+
+<body onload="main()">
+<div class="webgl_canvas">
+    <canvas id="canvas" width="800" height="800"></canvas>
+</div>
+</body>
+</html>
