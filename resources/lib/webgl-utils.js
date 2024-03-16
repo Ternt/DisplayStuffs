@@ -58,7 +58,7 @@ webglUtils = function(){
         return augmentedTypedArray(new Type(numOfComponents * numElements), numOfComponents);
     }
 
-    function augmentedTypedArray(typedArray, numOfComponents){
+    function augmentedTypedArray(typedArray){
         let index = 0;
         typedArray.push = function() {
             for(let i = 0; i < arguments.length; i++){
@@ -72,7 +72,6 @@ webglUtils = function(){
                 }
             }
         };
-        console.log(typedArray);
         return typedArray;
     }
 
