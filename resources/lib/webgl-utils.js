@@ -52,7 +52,32 @@ webglUtils = function(){
         return createProgram(gl, vertexShader, fragShader);
     }
 
+
+    function createAugmentedTypedArray(numOfComponents, numElements, opt_type){
+        const Type = opt_type || Float32Array;
+        return augmentedTypedArray(new Type(numOfComponents * numElements), numOfComponents);
+    }
+
+    function augmentedTypedArray(typedArray, numOfComponents){
+        let index = 0;
+        typedArray.push = function() {
+            for(let i = 0; i < arguments.length; i++){
+                let value = arguments[i];
+                if(value instanceof Array || (value.buffer && value.buffer instanceof ArrayBuffer)){
+                    for(let j = 0; j < value.length; j++){
+                        typedArray[index++] = value[j];
+                    }
+                }else{
+                    typedArray[index++] = value;
+                }
+            }
+        };
+        console.log(typedArray);
+        return typedArray;
+    }
+
     return {
         createProgramFromScripts,
+        createAugmentedTypedArray,
     };
 }();
