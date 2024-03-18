@@ -6,11 +6,12 @@
 
     <script id="vshader" type="x-shader/x-vertex">#version 300 es
         in vec3 a_position;
+        in vec3 a_normal;
 
         out vec4 fragColor;
         void main(){
             gl_Position = vec4(a_position, 1.0);
-            fragColor = vec4(1.0, 1.0, 1.0, 1.0);
+            fragColor = vec4(a_normal, 1.0);
         }
     </script>
 
