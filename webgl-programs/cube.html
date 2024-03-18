@@ -8,24 +8,25 @@
         in vec3 a_position;
         in vec3 a_normal;
 
-        out vec4 fragColor;
+        out vec4 vertColor;
         void main(){
-            gl_Position = vec4(a_position, 1.0);
-            fragColor = vec4(1.0, 1.0, 1.0, 1.0);
+            gl_Position = vec4(a_position, 1.0f);
+            vertColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);
         }
     </script>
 
     <script id="fshader" type="x-shader/x-fragment">#version 300 es
         precision mediump float;
-        in vec4 fragColor;
+        in vec4 vertColor;
 
-        out vec4 displayOut;
+        out vec4 FragColor;
         void main(){
-            displayOut = fragColor;
+            FragColor = vertColor;
         }
     </script>
 
     <script type="text/javascript" src="../resources/lib/webgl-primitives.js"></script>
+    <script type="text/javascript" src="../resources/lib/webgl-3d.js"></script>
     <script type="text/javascript" src="../resources/lib/webgl-utils.js"></script>
     <script type="text/javascript" src="cube.js"></script>
 </head>
