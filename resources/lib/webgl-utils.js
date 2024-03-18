@@ -1,5 +1,22 @@
 webglUtils = function(){
     "use strict"
+    function createProgram(gl, vertexShader, fragShader){
+        var program = gl.createProgram();
+        gl.attachShader(program, vertexShader);
+        gl.attachShader(program, fragShader);
+        gl.linkProgram(program);
+
+        if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+            var msg = "Uhm... your shader didn't link properly bro. Here's some deets: "
+                        + "<pre>" + gl.getProgramInfoLog(program) + "</pre>";
+            alert(msg);
+        }
+
+        gl.deleteShader(vertexShader);
+        gl.deleteShader(fragShader);
+        return program;
+    }
+
     function compileShader(gl, shaderSource, opt_type){
         var shader = gl.createShader(opt_type);
         gl.shaderSource(shader, shaderSource);
@@ -13,20 +30,6 @@ webglUtils = function(){
         return shader;
     }
 
-    function createProgram(gl, vertexShader, fragShader){
-        var program = gl.createProgram();
-        gl.attachShader(program, vertexShader);
-        gl.attachShader(program, fragShader);
-        gl.linkProgram(program);
-
-        if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-            var msg = "Uhm... your shader didn't link properly bro. Here's some deets: "
-                        + "<pre>" + gl.getProgramInfoLog(program) + "</pre>";
-            alert(msg);
-        }
-
-        return program;
-    }
 
     function createShaderFromScripts(gl, scriptId, opt_type){
         var shaderScript = document.getElementById(scriptId);
