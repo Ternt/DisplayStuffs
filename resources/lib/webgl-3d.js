@@ -133,6 +133,29 @@ m4 = function(){
         return mat;
     }
 
+    function orthographic(left, right, bottom, top, near, far, mat) {
+        mat = mat || new Float32Array(16);
+
+        mat[ 0] = 2 / (right - left);
+        mat[ 1] = 0;
+        mat[ 2] = 0;
+        mat[ 3] = 0;
+        mat[ 4] = 0;
+        mat[ 5] = 2 / (top - bottom);
+        mat[ 6] = 0;
+        mat[ 7] = 0;
+        mat[ 8] = 0;
+        mat[ 9] = 0;
+        mat[10] = 2 / (near - far);
+        mat[11] = 0;
+        mat[12] = (left + right) / (left - right);
+        mat[13] = (bottom + top) / (bottom - top);
+        mat[14] = (near + far) / (near - far);
+        mat[15] = 1;
+
+        return mat;
+    }
+
     function translate(tx, ty, tz, mat){
         mat = mat || new Float32Array(16);
         mat[ 0] = 1;
@@ -261,6 +284,7 @@ m4 = function(){
         subtract: subtract,
         multiplyScalar: multiplyScalar,
         mult: mult,
+        orthographic: orthographic,
         translate: translate,
         scale: scale,
         xRotate: xRotate,
