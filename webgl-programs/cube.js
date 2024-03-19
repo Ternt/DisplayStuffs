@@ -27,10 +27,12 @@ function main(){
 
    requestAnimationFrame(draw);
 
+   let alpha = 0;
     function draw(){
         gl.clear(gl.COLOR_BUFFER_BIT);
 
-        gl.uniformMatrix4fv(modelMatrixUniformLocation, false, m4.translate(0.25, 0.25, 0.0));
+        alpha += 0.1;
+        gl.uniformMatrix4fv(modelMatrixUniformLocation, false, m4.yRotate(alpha));
 
         gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
         requestAnimationFrame(draw);
