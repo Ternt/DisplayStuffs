@@ -78,8 +78,20 @@ webglUtils = function(){
         return typedArray;
     }
 
+    function printMat4(mat4){
+        let output = "";
+        for(let i = 0; i < 4; i++){
+            for (let j = 0; j < 4; j++) {
+                output = output + mat4[(4 * i) + j].toString();
+            }
+            output = output + "\n";
+        }
+        console.log(output);
+    }
+
     return {
         createProgramFromScripts,
         createAugmentedTypedArray,
+        printMat4: printMat4,
     };
 }();
