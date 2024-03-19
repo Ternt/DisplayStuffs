@@ -1,128 +1,81 @@
 primitive = function(){
     "use strict";
 
-    const CUBE_FACES_INDICES = [
-        [3, 2, 0, 1], // FRONT
-        [7, 6, 4, 5], // BACK
-        [2, 6, 4, 0],
-    ]
+    function createTetrahedronVertices(){
+        var cornerVertices = new Float32Array([
+            -0.5, -0.5, -0.5,
+             0.5, -0.5,  0.0,
+             0.0,  0.5,  0.0,
+            -0.5, -0.5,  0.5,
+             0.5, -0.5,  0.0,
+             0.0,  0.5,  0.0,
+        ]);
+
+        return {
+            position: cornerVertices
+        };
+    }
 
     function createCubeVertices(size){
         const n = size || 1;
 
-        var vertices = new Float32Array([
-            // FRONT (z: -1)
-            +n, +n, -n,
-            -n, +n, -n,
-            -n, -n, -n,
-            +n, -n, -n,
-            // RIGHT
-            +n, +n, +n,
-            +n, +n, -n,
-            +n, -n, -n,
-            +n, -n, +n,
-            // TOP
-            +n, +n, +n,
-            -n, +n, +n,
-            -n, +n, -n,
-            +n, +n, -n,
-            // LEFT
-            -n, +n, -n,
-            -n, +n, +n,
-            -n, -n, +n,
-            -n, -n, -n,
-            // BOTTOM
-            +n, -n, -n,
-            -n, -n, -n,
-            -n, -n, +n,
-            +n, -n, +n,
-            // BACK
-            -n, +n, +n,
-            +n, +n, +n,
-            +n, -n, +n,
-            -n, -n, +n
-        ]);
+        // FRONT (z: -1)
+        var cornerVertices = [
+            [-n, -n, -n],   // 0
+            [+n, -n, -n],   // 1
+            [-n, +n, -n],   // 2
+            [+n, +n, -n],   // 3
+            [-n, -n, +n],   // 4
+            [+n, -n, +n],   // 5
+            [-n, +n, +n],   // 6
+            [+n, +n, +n]    // 7
+        ];
 
-        var texture = new Uint8Array([
-            1, 1,
-            0, 1,
-            0, 0,
-            1, 0,
+        var uvCoords = [
+            [1, 0],
+            [0, 0],
+            [0, 1],
+            [1, 1],
+        ];
 
-            1, 1,
-            0, 1,
-            0, 0,
-            1, 0,
+        var faceNormals = [
+            [+0, +0, +1],   // FRONT
+            [+1, +0, +0],   // RIGHT
+            [+0, +1, +0],   // TOP
+            [-1, +0, +0],   // LEFT
+            [+0, -1, +0],   // BOTTOM
+            [+0, +0, -1],   // BACK
+        ];
 
-            1, 1,
-            0, 1,
-            0, 0,
-            1, 0,
+        var CUBE_FACE_INDICES = [
+            [3, 2, 0], [3, 0, 1],   // FRONT
+            [7, 3, 1], [1, 5, 7],   // RIGHT
+            [7, 6, 2], [7, 2, 3],   // TOP
+            [2, 6, 4], [2, 4, 0],   // LEFT
+            [1, 0, 4], [1, 4, 5],   // BOTTOM
+            [6, 7, 5], [5, 4, 6]    // BACK
+        ];
 
-            1, 1,
-            0, 1,
-            0, 0,
-            1, 0,
+        const numVertices = 3 * 2 * 6;
+        const positions = webglUtils.createAugmentedTypedArray(3, numVertices);
+        const normals   = webglUtils.createAugmentedTypedArray(3, numVertices);
+        const texCoords = webglUtils.createAugmentedTypedArray(2 , numVertices);
 
-            1, 1,
-            0, 1,
-            0, 0,
-            1, 0,
-
-            1, 1,
-            0, 1,
-            0, 0,
-            1, 0
-        ]);
-
-        var normals = new Int16Array([
-            // FRONT
-            0,  0, -1,
-            0,  0, -1,
-            0,  0, -1,
-            0,  0, -1,
-            // RIGHT
-            1,  0,  0,
-            1,  0,  0,
-            1,  0,  0,
-            1,  0,  0,
-            // TOP
-            0,  1,  0,
-            0,  1,  0,
-            0,  1,  0,
-            0,  1,  0,
-            // LEFT
-            -1,  0,  0,
-            -1,  0,  0,
-            -1,  0,  0,
-            -1,  0,  0,
-            // BOTTOM
-            0, -1,  0,
-            0, -1,  0,
-            0, -1,  0,
-            0, -1,  0,
-            // BACK
-            0,  0,  1,
-            0,  0,  1,
-            0,  0,  1,
-            0,  0,  1
-        ]);
-
-        var indices = new Uint16Array([
-            0,  1,  2,   0,  2,  3,
-            4,  5,  6,   4,  6,  7,
-            8,  9, 10,   8,  10, 11,
-            12, 13, 14,  12, 14, 15,
-            16, 17, 18,  16, 18, 19,
-            20, 21, 22,  20, 22, 23
-        ]);
+        for (let f = 0; f < 6; ++f) {
+            for(let t = 0; t < 2; t ++) {
+                const triIndices = CUBE_FACE_INDICES[(2 * f) + t];
+                for (let v = 0; v < 3; v++) {
+                    positions.push(cornerVertices[triIndices[v]]);
+                    normals.push(faceNormals[f]);
+                }
+            }
+        }
 
         return {
-            positions: vertices,
-            normals: normals,
-            texCoords: texture,
-            indices: indices,
-        }
+            position: positions,
+            normal: normals,
+            texcoord: texCoords,
+        };
     }
 
     function createQuadBufferVertices(size){
@@ -157,7 +110,8 @@ primitive = function(){
     }
 
     return{
-        createQuadBufferVertices,
+        createQuadBufferVertices: createQuadBufferVertices,
+        createTetrahedronVertices: createTetrahedronVertices,
         createCubeVertices,
     };
 }();
