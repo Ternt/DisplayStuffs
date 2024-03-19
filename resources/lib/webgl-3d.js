@@ -34,6 +34,28 @@ m4 = function(){
         return new Float32Array(16);
     }
 
+    function translate(x, y, z, mat){
+        mat = mat || new Float32Array(16);
+        mat[ 0] = 1;
+        mat[ 1] = 0;
+        mat[ 2] = 0;
+        mat[ 3] = 0;
+        mat[ 4] = 0;
+        mat[ 5] = 1;
+        mat[ 6] = 0;
+        mat[ 7] = 0;
+        mat[ 8] = 0;
+        mat[ 9] = 0;
+        mat[10] = 1;
+        mat[11] = 0;
+        mat[12] = x;
+        mat[13] = y;
+        mat[14] = z;
+        mat[15] = 1;
+
+        return mat;
+    }
+
     function add(a, b, mat){
         mat = mat || new Float32Array(16);
         let index = 0;
@@ -65,6 +87,13 @@ m4 = function(){
         return mat;
     }
 
+    /**
+     * Performs matrix multiplication on two matrices with the same dimensions.
+     * @param {Mat4} a
+     * @param {Mat4} b
+     * @param {Mat4} mat
+     * @return {Mat4}
+     */
     function mult(a, b, mat){
         mat = mat || new Float32Array(16);
         let a00 = a[0];
@@ -130,6 +159,7 @@ m4 = function(){
     return{
         identity: identity,
         createMat4: createMat4,
+        translate: translate,
         add: add,
         subtract: subtract,
         multiplyScalar: multiplyScalar,
