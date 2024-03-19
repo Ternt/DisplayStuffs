@@ -34,28 +34,6 @@ m4 = function(){
         return new Float32Array(16);
     }
 
-    function translate(x, y, z, mat){
-        mat = mat || new Float32Array(16);
-        mat[ 0] = 1;
-        mat[ 1] = 0;
-        mat[ 2] = 0;
-        mat[ 3] = 0;
-        mat[ 4] = 0;
-        mat[ 5] = 1;
-        mat[ 6] = 0;
-        mat[ 7] = 0;
-        mat[ 8] = 0;
-        mat[ 9] = 0;
-        mat[10] = 1;
-        mat[11] = 0;
-        mat[12] = x;
-        mat[13] = y;
-        mat[14] = z;
-        mat[15] = 1;
-
-        return mat;
-    }
-
     function add(a, b, mat){
         mat = mat || new Float32Array(16);
         let index = 0;
@@ -155,14 +133,138 @@ m4 = function(){
         return mat;
     }
 
+    function translate(tx, ty, tz, mat){
+        mat = mat || new Float32Array(16);
+        mat[ 0] = 1;
+        mat[ 1] = 0;
+        mat[ 2] = 0;
+        mat[ 3] = 0;
+        mat[ 4] = 0;
+        mat[ 5] = 1;
+        mat[ 6] = 0;
+        mat[ 7] = 0;
+        mat[ 8] = 0;
+        mat[ 9] = 0;
+        mat[10] = 1;
+        mat[11] = 0;
+        mat[12] = tx;
+        mat[13] = ty;
+        mat[14] = tz;
+        mat[15] = 1;
+        return mat;
+    }
+
+    function scale(sx, sy, sz, mat){
+        mat = mat || new Float32Array(16);
+        mat[ 0] = sx;
+        mat[ 1] = 0;
+        mat[ 2] = 0;
+        mat[ 3] = 0;
+        mat[ 4] = 0;
+        mat[ 5] = sy;
+        mat[ 6] = 0;
+        mat[ 7] = 0;
+        mat[ 8] = 0;
+        mat[ 9] = 0;
+        mat[10] = sz;
+        mat[11] = 0;
+        mat[12] = 0;
+        mat[13] = 0;
+        mat[14] = 0;
+        mat[15] = 1;
+        return mat;
+    }
+
+    function xRotate(angle, mat){
+        mat = mat || new Float32Array(16);
+        const angleInRad = angle * (Math.PI/180);
+        const cos = Math.cos(angleInRad);
+        const sin = Math.sin(angleInRad);
+
+        mat[ 0] = 1;
+        mat[ 1] = 0;
+        mat[ 2] = 0;
+        mat[ 3] = 0;
+        mat[ 4] = 0;
+        mat[ 5] = cos;
+        mat[ 6] = sin;
+        mat[ 7] = 0;
+        mat[ 8] = 0;
+        mat[ 9] = -sin;
+        mat[10] = cos;
+        mat[11] = 0;
+        mat[12] = 0;
+        mat[13] = 0;
+        mat[14] = 0;
+        mat[15] = 1;
+
+        return mat;
+    }
+
+    function yRotate(angle, mat){
+        mat = mat || new Float32Array(16);
+        const angleInRad = angle * (Math.PI/180);
+        const cos = Math.cos(angleInRad);
+        const sin = Math.sin(angleInRad);
+
+        mat[ 0] = cos;
+        mat[ 1] = 0;
+        mat[ 2] = -sin;
+        mat[ 3] = 0;
+        mat[ 4] = 0;
+        mat[ 5] = 1;
+        mat[ 6] = 0;
+        mat[ 7] = 0;
+        mat[ 8] = sin;
+        mat[ 9] = 0;
+        mat[10] = cos;
+        mat[11] = 0;
+        mat[12] = 0;
+        mat[13] = 0;
+        mat[14] = 0;
+        mat[15] = 1;
+
+        return mat;
+    }
+
+
+    function zRotate(angle, mat){
+        mat = mat || new Float32Array(16);
+        const angleInRad = angle * (Math.PI/180);
+        const cos = Math.cos(angleInRad);
+        const sin = Math.sin(angleInRad);
+
+        mat[ 0] = cos;
+        mat[ 1] = sin;
+        mat[ 2] = 0;
+        mat[ 3] = 0;
+        mat[ 4] = -sin;
+        mat[ 5] = cos;
+        mat[ 6] = 0;
+        mat[ 7] = 0;
+        mat[ 8] = 0;
+        mat[ 9] = 0;
+        mat[10] = 1;
+        mat[11] = 0;
+        mat[12] = 0;
+        mat[13] = 0;
+        mat[14] = 0;
+        mat[15] = 1;
+
+        return mat;
+    }
 
     return{
         identity: identity,
         createMat4: createMat4,
-        translate: translate,
         add: add,
         subtract: subtract,
         multiplyScalar: multiplyScalar,
-        mult: mult
+        mult: mult,
+        translate: translate,
+        scale: scale,
+        xRotate: xRotate,
+        yRotate: yRotate,
+        zRotate: zRotate,
     }
 }();
