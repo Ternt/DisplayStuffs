@@ -20,76 +20,87 @@ function main(){
     const projectionMatrixUniformLocation = gl.getUniformLocation(shaderProgram, "projMatrix");
 
     function createCubeVertices(size){
-        const n = size || 1;
+        const k = size/2 || 2.0;
 
-        var cornerVertices = [
-            [-n, -n, -n],   // 0
-            [+n, -n, -n],   // 1
-            [-n, +n, -n],   // 2
-            [+n, +n, -n],   // 3
-            [-n, -n, +n],   // 4
-            [+n, -n, +n],   // 5
-            [-n, +n, +n],   // 6
-            [+n, +n, +n]    // 7
+        var vertices = [
+            // Vertex Data        // Normal Data            // Texture Data
+            // front face (z: +1)
+            k,  k,  k,           0.0, 0.0, 1.0,            1.0, 1.0,
+            -k,  k,  k,           0.0, 0.0, 1.0,            0.0, 1.0,
+            -k, -k,  k,           0.0, 0.0, 1.0,            0.0, 0.0,
+            k, -k,  k,           0.0, 0.0, 1.0,            1.0, 0.0,
+            // right face (x: +1)
+            k,  k, -k,           1.0, 0.0, 0.0,            1.0, 1.0,
+            k,  k,  k,           1.0, 0.0, 0.0,            0.0, 1.0,
+            k, -k,  k,           1.0, 0.0, 0.0,            0.0, 0.0,
+            k, -k, -k,           1.0, 0.0, 0.0,            1.0, 0.0,
+            // top face (y: +1)
+            k,  k, -k,           0.0, 1.0, 0.0,            1.0, 1.0,
+            -k,  k, -k,           0.0, 1.0, 0.0,            0.0, 1.0,
+            -k,  k,  k,           0.0, 1.0, 0.0,            0.0, 0.0,
+            k,  k,  k,           0.0, 1.0, 0.0,            1.0, 0.0,
+            // left face (x: -1)
+            -k,  k,  k,           -1.0, 0.0, 0.0,           1.0, 1.0,
+            -k,  k, -k,           -1.0, 0.0, 0.0,           0.0, 1.0,
+            -k, -k, -k,           -1.0, 0.0, 0.0,           0.0, 0.0,
+            -k, -k,  k,           -1.0, 0.0, 0.0,           1.0, 0.0,
+            // bottom face (y: -1)
+            k, -k,  k,           0.0, -1.0, 0.0,           1.0, 1.0,
+            -k, -k,  k,           0.0, -1.0, 0.0,           0.0, 1.0,
+            -k, -k, -k,           0.0, -1.0, 0.0,           0.0, 0.0,
+            k, -k, -k,           0.0, -1.0, 0.0,           1.0, 0.0,
+            // back face (z: -1)
+            -k,  k, -k,           0.0, 0.0, -1.0,           1.0, 1.0,
+            k,  k, -k,           0.0, 0.0, -1.0,           0.0, 1.0,
+            k, -k, -k,           0.0, 0.0, -1.0,           0.0, 0.0,
+            -k, -k, -k,           0.0, 0.0, -1.0,           1.0, 0.0,
         ];
 
-        var faceNormals = [
-            [+0, +0, +1],   // FRONT
-            [+1, +0, +0],   // RIGHT
-            [+0, +1, +0],   // TOP
-            [-1, +0, +0],   // LEFT
-            [+0, -1, +0],   // BOTTOM
-            [+0, +0, -1],   // BACK
+        var indices = [
+            0,  1,  2,   0,  2,  3,
+            4,  5,  6,   4,  6,  7,
+            8,  9, 10,   8, 10, 11,
+            12, 13, 14,  12, 14, 15,
+            16, 17, 18,  16, 18, 19,
+            20, 21, 22,  20, 22, 23
         ];
-
-        var CUBE_FACE_INDICES = [
-            [3, 2, 0], [3, 0, 1],   // FRONT
-            [7, 3, 1], [1, 5, 7],   // RIGHT
-            [7, 6, 2], [7, 2, 3],   // TOP
-            [2, 6, 4], [2, 4, 0],   // LEFT
-            [1, 0, 4], [1, 4, 5],   // BOTTOM
-            [6, 7, 5], [5, 4, 6]    // BACK
-        ];
-
-        const numVertices = 3 * 2 * 6;
-        const positions = webglUtils.createAugmentedTypedArray(3, numVertices);
-        const normals   = webglUtils.createAugmentedTypedArray(3, numVertices);
-        const texCoords = webglUtils.createAugmentedTypedArray(2 , numVertices);
-
-        for (let f = 0; f < 6; ++f) {
-            for(let t = 0; t < 2; t ++) {
-                const triIndices = CUBE_FACE_INDICES[(2 * f) + t];
-                for (let v = 0; v < 3; v++) {
-                    positions.push(cornerVertices[triIndices[v]]);
-                    normals.push(faceNormals[f]);
-                }
-            }
-        }
 
         return {
-            position: positions,
-            normal: normals,
+            vertices: vertices, // 0.75 KiB
+            indices: indices,   // 72 bytes
         };
     }
 
     const cubeData = createCubeVertices(0.5);
-    const pointBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, pointBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, cubeData.position, gl.STATIC_DRAW);
+    const vertexBufferObject = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBufferObject);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(cubeData.vertices), gl.STATIC_DRAW);
+
     gl.enableVertexAttribArray(positionAttributeLocation);
-    gl.vertexAttribPointer(positionAttributeLocation, 3, gl.FLOAT, false, 0, 0);
+    gl.vertexAttribPointer(
+        positionAttributeLocation,
+        3,
+        gl.FLOAT,
+        false,
+        8 * Float32Array.BYTES_PER_ELEMENT,
+        0);
 
-    const normalBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, cubeData.normal, gl.STATIC_DRAW);
     gl.enableVertexAttribArray(normalAttributeLocation);
-    gl.vertexAttribPointer(normalAttributeLocation, 3, gl.FLOAT, false, 0, 0);
+    gl.vertexAttribPointer(
+        normalAttributeLocation,
+        3,
+        gl.FLOAT,
+        false,
+        8 * Float32Array.BYTES_PER_ELEMENT,
+        3 * Float32Array.BYTES_PER_ELEMENT);
 
-    console.log(cubeData);
+    var indexBufferObject = gl.createBuffer();
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBufferObject);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(cubeData.indices), gl.STATIC_DRAW);
 
-   requestAnimationFrame(draw);
+    requestAnimationFrame(draw);
 
-   let alpha = 0;
+    let alpha = 0;
     function draw(){
         gl.clear(gl.COLOR_BUFFER_BIT);
 
@@ -99,10 +110,9 @@ function main(){
             m4.orthographic(-1, 1, -1, 1, -1, 1));
         gl.uniformMatrix4fv(modelMatrixUniformLocation,
             false,
-                m4.mult(m4.xRotate(-alpha),
-                        m4.yRotate(alpha)));
+            m4.mult(m4.xRotate(alpha), m4.yRotate(-alpha)));
 
-        gl.drawArrays(gl.TRIANGLES, 0, 36);
+        gl.drawElements(gl.TRIANGLES, cubeData.indices.length, gl.UNSIGNED_SHORT,0);
         requestAnimationFrame(draw);
     }
 }
