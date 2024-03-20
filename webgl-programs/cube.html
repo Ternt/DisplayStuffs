@@ -13,9 +13,10 @@
 
         flat out vec4 vertColor;
         void main(){
+            vec4 normal_position = vec4(a_normal, 1.0f);
+
             gl_Position = projMatrix * modelMatrix * vec4(a_position, 1.0f);
-            gl_PointSize = 10.0f;
-            vertColor = normalize(vec4(a_normal, 1.0f));
+            vertColor = normal_position;
         }
     </script>
 
