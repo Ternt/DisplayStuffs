@@ -17,64 +17,54 @@ primitive = function(){
     }
 
     function createCubeVertices(size){
-        const n = size || 1;
+        const k = size/2 || 2.0;
 
-        // FRONT (z: -1)
-        var cornerVertices = [
-            [-n, -n, -n],   // 0
-            [+n, -n, -n],   // 1
-            [-n, +n, -n],   // 2
-            [+n, +n, -n],   // 3
-            [-n, -n, +n],   // 4
-            [+n, -n, +n],   // 5
-            [-n, +n, +n],   // 6
-            [+n, +n, +n]    // 7
+        var vertices = [
+            // Vertex Data        // Normal Data            // Texture Data
+            // front face (z: +1)
+             k,  k,  k,           0.0, 0.0, 1.0,            1.0, 1.0,
+            -k,  k,  k,           0.0, 0.0, 1.0,            0.0, 1.0,
+            -k, -k,  k,           0.0, 0.0, 1.0,            0.0, 0.0,
+             k, -k,  k,           0.0, 0.0, 1.0,            1.0, 0.0,
+            // right face (x: +1)
+             k,  k, -k,           1.0, 0.0, 0.0,            1.0, 1.0,
+             k,  k,  k,           1.0, 0.0, 0.0,            0.0, 1.0,
+             k, -k,  k,           1.0, 0.0, 0.0,            0.0, 0.0,
+             k, -k, -k,           1.0, 0.0, 0.0,            1.0, 0.0,
+            // top face (y: +1)
+             k,  k, -k,           0.0, 1.0, 0.0,            1.0, 1.0,
+            -k,  k, -k,           0.0, 1.0, 0.0,            0.0, 1.0,
+            -k,  k,  k,           0.0, 1.0, 0.0,            0.0, 0.0,
+             k,  k,  k,           0.0, 1.0, 0.0,            1.0, 0.0,
+            // left face (x: -1)
+            -k,  k,  k,           -1.0, 0.0, 0.0,           1.0, 1.0,
+            -k,  k, -k,           -1.0, 0.0, 0.0,           0.0, 1.0,
+            -k, -k, -k,           -1.0, 0.0, 0.0,           0.0, 0.0,
+            -k, -k,  k,           -1.0, 0.0, 0.0,           1.0, 0.0,
+            // bottom face (y: -1)
+             k, -k,  k,           0.0, -1.0, 0.0,           1.0, 1.0,
+            -k, -k,  k,           0.0, -1.0, 0.0,           0.0, 1.0,
+            -k, -k, -k,           0.0, -1.0, 0.0,           0.0, 0.0,
+             k, -k, -k,           0.0, -1.0, 0.0,           1.0, 0.0,
+            // back face (z: -1)
+            -k,  k, -k,           0.0, 0.0, -1.0,           1.0, 1.0,
+             k,  k, -k,           0.0, 0.0, -1.0,           0.0, 1.0,
+             k, -k, -k,           0.0, 0.0, -1.0,           0.0, 0.0,
+            -k, -k, -k,           0.0, 0.0, -1.0,           1.0, 0.0,
         ];
 
-        var uvCoords = [
-            [1, 0],
-            [0, 0],
-            [0, 1],
-            [1, 1],
+        var indices = [
+            0,  1,  2,   0,  2,  3,
+            4,  5,  6,   4,  6,  7,
+            8,  9, 10,   8, 10, 11,
+            12, 13, 14,  12, 14, 15,
+            16, 17, 18,  16, 18, 19,
+            20, 21, 22,  20, 22, 23
         ];
-
-        var faceNormals = [
-            [+0, +0, +1],   // FRONT
-            [+1, +0, +0],   // RIGHT
-            [+0, +1, +0],   // TOP
-            [-1, +0, +0],   // LEFT
-            [+0, -1, +0],   // BOTTOM
-            [+0, +0, -1],   // BACK
-        ];
-
-        var CUBE_FACE_INDICES = [
-            [3, 2, 0], [3, 0, 1],   // FRONT
-            [7, 3, 1], [1, 5, 7],   // RIGHT
-            [7, 6, 2], [7, 2, 3],   // TOP
-            [2, 6, 4], [2, 4, 0],   // LEFT
-            [1, 0, 4], [1, 4, 5],   // BOTTOM
-            [6, 7, 5], [5, 4, 6]    // BACK
-        ];
-
-        const numVertices = 3 * 2 * 6;
-        const positions = webglUtils.createAugmentedTypedArray(3, numVertices);
-        const normals   = webglUtils.createAugmentedTypedArray(3, numVertices);
-        const texCoords = webglUtils.createAugmentedTypedArray(2 , numVertices);
-
-        for (let f = 0; f < 6; ++f) {
-            for(let t = 0; t < 2; t ++) {
-                const triIndices = CUBE_FACE_INDICES[(2 * f) + t];
-                for (let v = 0; v < 3; v++) {
-                    positions.push(cornerVertices[triIndices[v]]);
-                    normals.push(faceNormals[f]);
-                }
-            }
-        }
 
         return {
-            position: positions,
-            normal: normals,
-            texcoord: texCoords,
+            vertices: vertices, // 0.75 KiB
+            indices: indices,   // 72 bytes
         };
     }
 
