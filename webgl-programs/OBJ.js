@@ -14,7 +14,7 @@ function main(){
     gl.frontFace(gl.CCW);
     gl.clear(gl.COLOR_BUFFER_BIT);
 
-    const model = new OBJLoader("http://localhost:63342/DisplayStuffs/resources/models/stanford-bunny.obj");
+    const model = new OBJLoader("DisplayStuffs/resources/models/stanford-bunny.obj");
 
     const vertexBufferObject = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBufferObject);

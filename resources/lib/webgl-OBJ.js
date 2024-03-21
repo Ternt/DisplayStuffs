@@ -5,7 +5,16 @@ class OBJLoader{
     faceIndex = [];
 
     constructor(path) {
+        path = this.createURL(path);
         this.loadFile(path, this.parseFile.bind(this));
+    }
+
+    createURL(path){
+        const protocol = window.location.protocol;
+        const hostname = window.location.hostname;
+        const port = window.location.port;
+        path = protocol + "//" + hostname + ":" + port + "/" + path;
+        return path;
     }
 
 
@@ -18,7 +27,7 @@ class OBJLoader{
             if (req.readyState === 4 && req.status === 200) {
                 let file = req.responseText;
 
-                // console.log(path);
+                console.log(path);
 
                 // Parse the file
                 parseFile(file);
