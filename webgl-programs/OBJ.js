@@ -14,7 +14,8 @@ function main(){
     gl.frontFace(gl.CCW);
     gl.clear(gl.COLOR_BUFFER_BIT);
 
-    const model = new OBJLoader("DisplayStuffs/resources/models/stanford-bunny.obj");
+    const bunny = new OBJLoader("DisplayStuffs/resources/models/stanfordbunny/stanford_bunny.obj");
+    const dragon = new OBJLoader("DisplayStuffs/resources/models/asian-dragon/xyzrgb_dragon.obj");
 
     const vertexBufferObject = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBufferObject);
@@ -22,15 +23,10 @@ function main(){
     requestAnimationFrame(draw);
 
     let alpha = 0;
-    let count = 0;
     function draw(){
         gl.clear(gl.COLOR_BUFFER_BIT);
 
-        if(model.objParsed && count < 1){
-            ++count;
-            console.log(model.vertices);
-            console.log(model.faceIndex);
-        }
+
 
         requestAnimationFrame(draw);
     }

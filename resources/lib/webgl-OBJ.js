@@ -17,7 +17,6 @@ class OBJLoader{
         return path;
     }
 
-
     loadFile(path, parseFile) {
         // Asynchronously load file
         let req = new XMLHttpRequest(); // See [1]
@@ -37,6 +36,7 @@ class OBJLoader{
     }
 
     parseFile(file){
+        file = file.trim();
         let lines = file.split("\n");
         //console.log(lines);
 
@@ -57,5 +57,6 @@ class OBJLoader{
         }
 
         this.objParsed = true;
+        console.log(this.vertices, this.faceIndex);
     }
 }
