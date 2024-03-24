@@ -1,8 +1,7 @@
 class OBJLoader{
 
     objParsed = false;
-    vertices = [];
-    faceIndex = [];
+    positions = [];
 
     constructor(path) {
         path = this.createURL(path);
@@ -40,6 +39,7 @@ class OBJLoader{
         let lines = file.split("\n");
         //console.log(lines);
 
+        const vertices = [];
         for(let line = 0 ; line < lines.length ; line++){
             if(lines[line].startsWith("#")){
                 continue;
@@ -47,16 +47,28 @@ class OBJLoader{
 
             if(lines[line].startsWith("v")){
                 let v = lines[line].match(/-*\d.\w*(\s)*/g);
-                this.vertices.push(v[0], v[1], v[2]);
+                vertices.push(v[0], v[1], v[2]);
             }
 
             if(lines[line].startsWith("f")){
                 let f = lines[line].match(/(\d)+(\s)*/g);
-                this.faceIndex.push(f[0], f[1], f[2]);
+                this.positions.push(vertices[(f[0]*3)-1], vertices[(f[0]*3)-2], vertices[(f[0]*3)-3]);
+                this.positions.push(vertices[(f[1]*3)-1], vertices[(f[1]*3)-2], vertices[(f[1]*3)-3]);
+                this.positions.push(vertices[(f[2]*3)-1], vertices[(f[2]*3)-2], vertices[(f[2]*3)-3]);
             }
         }
 
         this.objParsed = true;
-        console.log(this.vertices, this.faceIndex);
+        console.log(vertices, this.positions);
+    }
+
+    verifyAttribute(attribute){
+        for(let i = 0; i < attribute.length ; i++){
+            if(attribute[i] === undefined){
+                return false;
+            }
+        }
+
+        return true;
     }
 }
