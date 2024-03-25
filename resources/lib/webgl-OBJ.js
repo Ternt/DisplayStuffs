@@ -1,68 +1,61 @@
-class OBJLoader{
+OBJ = function(){
+    "use strict";
 
-    objParsed = false;
-    positions = [];
+    const getFileContents = async(filename) =>{
+        const file = await fetch(filename)
+        const body = await file.text();
+        return body;
+    };
 
-    constructor(path) {
-        path = this.createURL(path);
-        this.loadFile(path, this.parseFile.bind(this));
-    }
-
-    createURL(path){
-        const protocol = window.location.protocol;
-        const hostname = window.location.hostname;
-        const port = window.location.port;
-        path = protocol + "//" + hostname + ":" + port + "/" + path;
-        return path;
-    }
-
-    loadFile(path, parseFile) {
-        // Asynchronously load file
-        let req = new XMLHttpRequest(); // See [1]
-        req.overrideMimeType( "text/plain; charset=x-user-defined" );   // Ensure correct MIME type (see [3])
-        req.open('GET', path);
-        req.onreadystatechange = function() {
-            if (req.readyState === 4 && req.status === 200) {
-                let file = req.responseText;
-
-                console.log(path);
-
-                // Parse the file
-                parseFile(file);
-            }
+    function stringsToValues(strings){
+        const numbers = [];
+        for(const str of strings){
+            numbers.push(parseFloat(str));
         }
-        req.send(null);
+        return numbers;
     }
 
-    parseFile(file){
-        file = file.trim();
-        let lines = file.split("\n");
-        //console.log(lines);
+    function parseFile(fileContents){
+        fileContents = fileContents.trim();
+        let lines = fileContents.split('\n');
+        const positions = [];
+        const normals   = [];
+        const texCoords = [];
 
-        const vertices = [];
-        for(let line = 0 ; line < lines.length ; line++){
-            if(lines[line].startsWith("#")){
-                continue;
+        const arrayBufferSource = [];
+
+        lines.forEach(line => {
+            if(line.startsWith('#')){
+                return;
             }
 
-            if(lines[line].startsWith("v")){
-                let v = lines[line].match(/-*\d.\w*(\s)*/g);
-                vertices.push(v[0], v[1], v[2]);
-            }
+            const [ command, ...values ] = line.split(' ', 4);
 
-            if(lines[line].startsWith("f")){
-                let f = lines[line].match(/(\d)+(\s)*/g);
-                this.positions.push(vertices[(f[0]*3)-1], vertices[(f[0]*3)-2], vertices[(f[0]*3)-3]);
-                this.positions.push(vertices[(f[1]*3)-1], vertices[(f[1]*3)-2], vertices[(f[1]*3)-3]);
-                this.positions.push(vertices[(f[2]*3)-1], vertices[(f[2]*3)-2], vertices[(f[2]*3)-3]);
-            }
-        }
+            if(command === 'v'){
+                positions.push(stringsToValues(values));
+            }else if(command === 'vn'){
+                normals.push(stringsToValues(values));
+            }else if(command === 'vt'){
+                texCoords.push(stringsToValues(values));
+            }else if(command === 'f'){
+                for(const group of values){
+                    const [ positionIndexBuffer, texCoordIndex, normalIndex] = stringsToValues(group.split('/'));
 
-        this.objParsed = true;
-        console.log(vertices, this.positions);
+                    arrayBufferSource.push(...positions[positionIndexBuffer-1]);
+                }
+            }
+        })
+
+        return new Float32Array(arrayBufferSource).buffer;
     }
 
-    verifyAttribute(attribute){
+    const loadObject = async(filename) => {
+        const file = await getFileContents(filename);
+        const arrayBuffer = await parseFile(file);
+        return arrayBuffer;
+    }
+
+    function verifyAttribute(attribute){
         for(let i = 0; i < attribute.length ; i++){
             if(attribute[i] === undefined){
                 return false;
@@ -71,4 +64,9 @@ class OBJLoader{
 
         return true;
     }
-}
+
+    return{
+        load: loadObject,
+        verifyAttribute,
+    }
+}();

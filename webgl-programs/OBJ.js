@@ -1,4 +1,4 @@
-function main(){
+async function main(){
     var canvas = document.getElementById("canvas");
     var gl = canvas.getContext("webgl2");
     if(!gl){
@@ -19,48 +19,26 @@ function main(){
     const modelMatrixUniformLocation = gl.getUniformLocation(shaderProgram, "modelMatrix");
     const projectionMatrixUniformLocation = gl.getUniformLocation(shaderProgram, "projMatrix");
 
-    const bunny = new OBJLoader("DisplayStuffs/resources/models/stanfordbunny/stanford_bunny.obj");
-    //const dragon = new OBJLoader("DisplayStuffs/resources/models/asiandragon/xyzrgb_dragon.obj");
-
+    const bunnyArrayBuffer = await OBJ.load("/resources/models/asiandragon/xyzrgb_dragon.obj");
+    console.log(bunnyArrayBuffer);
 
     const vertexBufferObject = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBufferObject);
+    gl.bufferData(gl.ARRAY_BUFFER, bunnyArrayBuffer, gl.STATIC_DRAW);
+    gl.vertexAttribPointer(positionAttributeLocation, 3, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(positionAttributeLocation);
 
     requestAnimationFrame(draw);
 
     let alpha = 0;
+    let count = 0;
     function draw(){
         gl.clear(gl.COLOR_BUFFER_BIT);
 
         alpha += 0.5;
-        gl.uniformMatrix4fv(projectionMatrixUniformLocation,
-            false,
-            m4.orthographic(-1, 1, -1, 1, -1, 1));
-        gl.uniformMatrix4fv(modelMatrixUniformLocation,
-            false,
-            m4.mult(
-                m4.yRotate(-alpha),
-                m4.scale(3.0, 3.0, 3.0)));
-            // m4.mult(
-            //     m4.xRotate(alpha),
-            //     m4.mult(
-            //         m4.yRotate(-alpha),
-            //         m4.scale(3.0, 3.0, 3.0))));
-
-        if(bunny.objParsed){
-            //console.log(bunny.verifyAttribute(bunny.positions));
-
-            gl.bindBuffer(gl.ARRAY_BUFFER, vertexBufferObject);
-            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(bunny.positions), gl.STATIC_DRAW);
-            gl.enableVertexAttribArray(positionAttributeLocation);
-            gl.vertexAttribPointer(
-                positionAttributeLocation,
-                3,
-                gl.FLOAT,
-                false,
-                0,
-                0);
-            gl.drawArrays(gl.TRIANGLES, 0, bunny.positions.length/3);
-        }
+        gl.uniformMatrix4fv(projectionMatrixUniformLocation, false, m4.orthographic(-1, 1, -1, 1, -1, 1));
+        gl.uniformMatrix4fv(modelMatrixUniformLocation, false, m4.mult(m4.yRotate(-alpha), m4.scale(0.01, 0.01, 0.01)));
+        gl.drawArrays(gl.TRIANGLES, 0, bunnyArrayBuffer.byteLength/12);
         requestAnimationFrame(draw);
     }
 }
