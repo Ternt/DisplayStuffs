@@ -1,12 +1,7 @@
 OBJ = function(){
     "use strict";
-
-    const positions = [];
-    const normals   = [];
-    const texCoords = [];
-
-    const getFileContents = async(filename) =>{
-        const file = await fetch(filename)
+    const getFileContents = async(path) =>{
+        const file = await fetch(path)
         const body = await file.text();
         return body;
     };
@@ -22,7 +17,11 @@ OBJ = function(){
     function parseFile(fileContents){
         fileContents = fileContents.trim();
         let lines = fileContents.split('\n');
-        const arrayBufferSource = [];
+
+        let arrayBufferSource = [];
+        let positions = [];
+        let normals   = [];
+        let texCoords = [];
 
         lines.forEach(line => {
             if(line.startsWith('#')){
@@ -40,33 +39,25 @@ OBJ = function(){
                 for(const group of values){
                     const [ positionIndexBuffer, texCoordIndexBuffer, normalIndexBuffer] = stringToNumber(group.split('/'));
                     arrayBufferSource.push(...positions[positionIndexBuffer-1]);
-
-                    if(normalIndexBuffer) {
-                        arrayBufferSource.push(...normals[normalIndexBuffer - 1]);
-                    }else if(texCoordIndexBuffer){
-                        arrayBufferSource.push(...texCoords[texCoordIndexBuffer-1]);
-                    }
+                    if(normalIndexBuffer) {arrayBufferSource.push(...normals[normalIndexBuffer - 1]);}
+                    if(texCoordIndexBuffer) {arrayBufferSource.push(...texCoords[texCoordIndexBuffer-1]);}
                 }
             }
         })
-        return new Float32Array(arrayBufferSource).buffer;
+        return new Float32Array(arrayBufferSource);
     }
 
-    const loadObject = async(filename) => {
-        const file = await getFileContents(filename);
-        const arrayBuffer = await parseFile(file);
-        return arrayBuffer;
+    const loadObject = async(path) => {
+        const file = await getFileContents(path);
+        const arrayBufferSource = await parseFile(file);
+        return arrayBufferSource.buffer;
     }
 
-    const loadMTL = (path) => new Promise(resolve => {
+    const loadImage = (path) => new Promise(resolve => {
         const image = new Image();
         image.addEventListener('load', () => resolve(image))
         image.src = path;
     });
-
-    function calculateCentroid(){
-        // TODO: Create a function to adjust object center for the models that are not centered at the origin. This might be a tall task...
-    }
 
     function verifyAttribute(attribute){
         for(let i = 0; i < attribute.length ; i++){
@@ -80,7 +71,7 @@ OBJ = function(){
 
     return{
         loadObject: loadObject,
-        loadMTL: loadMTL,
+        loadImage: loadImage,
         verify: verifyAttribute,
     }
 }();
