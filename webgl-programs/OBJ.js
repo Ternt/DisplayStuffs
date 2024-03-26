@@ -24,23 +24,32 @@ async function main(){
     const normalSamplerUniformLocation      = gl.getUniformLocation(shaderProgram, "uSampler_normal");
     const AOSamplerUniformLocation          = gl.getUniformLocation(shaderProgram, "uSampler_AO");
 
-    // const arrayBuffer = await OBJ.load("/resources/models/asiandragon/xyzrgb_dragon.obj");
-    // const arrayBuffer = await OBJ.load("/resources/models/stanfordbunny/bunny.obj");
-    const arrayBuffer   = await OBJ.loadObject("/resources/models/meteor/Iron_Meteorite.obj");
-    const diffuse       = await OBJ.loadMTL("/resources/models/meteor/Iron_Meteorite-diffuse.png");
-    const normal        = await OBJ.loadMTL("/resources/models/meteor/Iron_Meteorite-normal.png");
-    const AO            = await OBJ.loadMTL("/resources/models/meteor/Iron_Meteorite-AO.png");
-    //console.log(arrayBuffer);
+    const dragon = {
+        buffer      : await OBJ.loadObject("/resources/models/dragon/dragon.obj"),
+    }
+    const dragonPillar = {
+        buffer      : await OBJ.loadObject("/resources/models/stonedragonpillar/stone_dragon_pillar-fixed.obj"),
+    }
+    const meteorite = {
+        buffer      : await OBJ.loadObject("/resources/models/meteor/Iron_Meteorite-fixed.obj"),
+        diffuse     : await OBJ.loadImage("/resources/models/meteor/Iron_Meteorite-diffuse.png"),
+        normal      : await OBJ.loadImage("/resources/models/meteor/Iron_Meteorite-normal.png"),
+        ao          : await OBJ.loadImage("/resources/models/meteor/Iron_Meteorite-AO.png"),
+    }
+
+    console.log(meteorite.buffer.byteLength);
 
     const vertexBufferObject = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBufferObject);
-    gl.bufferData(gl.ARRAY_BUFFER, arrayBuffer, gl.STATIC_DRAW);
-    gl.vertexAttribPointer(positionAttributeLocation, 3, gl.FLOAT, false, 20, 0);
-    gl.vertexAttribPointer(texCoordAttributeLocation, 2, gl.FLOAT, false, 20, 12);
+    gl.bufferData(gl.ARRAY_BUFFER, meteorite.buffer, gl.STATIC_DRAW);
+    gl.vertexAttribPointer(positionAttributeLocation, 3, gl.FLOAT, false, 32, 0);
+    gl.vertexAttribPointer(normalAttributeLocation, 3, gl.FLOAT, false, 32, 12);
+    gl.vertexAttribPointer(texCoordAttributeLocation, 2, gl.FLOAT, false, 32, 24);
     gl.enableVertexAttribArray(positionAttributeLocation);
+    gl.enableVertexAttribArray(normalAttributeLocation);
     gl.enableVertexAttribArray(texCoordAttributeLocation);
 
-    const transformation = m4.mult(m4.scale(0.06, 0.06, 0.06), m4.xRotate(-90));
+    const transformation = m4.mult(m4.scale(0.08, 0.08, 0.08), m4.zRotate(0.0));
     gl.uniformMatrix4fv(projectionMatrixUniformLocation, false, m4.orthographic(-1, 1, -1, 1, -1, 1));
 
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
@@ -63,19 +72,19 @@ async function main(){
         gl.generateMipmap(gl.TEXTURE_2D);
     }
 
-    configureImage(diffuseSamplerUniformLocation, 0, 8192, 8192, diffuse);
-    configureImage(normalSamplerUniformLocation, 1, 8192, 8192, normal);
-    //configureImage(AOSamplerUniformLocation, 1, 4096, 4096, AO);
+    configureImage(diffuseSamplerUniformLocation, 0, 8192, 8192, meteorite.diffuse);
+    configureImage(normalSamplerUniformLocation, 1, 8192, 8192, meteorite.normal);
+    // configureImage(AOSamplerUniformLocation, 1, 4096, 4096, AO);
 
     requestAnimationFrame(draw);
 
     let alpha = 0;
-    let count = arrayBuffer.byteLength/20;
+    let count = meteorite.buffer.byteLength/32;
     function draw(){
         gl.clear(gl.COLOR_BUFFER_BIT);
 
         alpha += 1;
-        gl.uniformMatrix4fv(modelMatrixUniformLocation, false, m4.mult(m4.zRotate(alpha), transformation));
+        gl.uniformMatrix4fv(modelMatrixUniformLocation, false, m4.mult(m4.yRotate(alpha), transformation));
         gl.drawArrays(gl.TRIANGLES, 0, count);
         requestAnimationFrame(draw);
     }
