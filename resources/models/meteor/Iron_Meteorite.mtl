@@ -1,0 +1,14 @@
+#
+# Wavefront material file
+# Created in RealityCapture
+# Engine version v1.3.2.117357
+#
+
+newmtl Iron_Meteorite_30k_u1_v1
+Ka 1 1 1
+Kd 1 1 1
+d 1
+Ns 0
+illum 1
+map_Kd Iron_Meteorite_u1_v1_diffuse.png
+map_Bump Iron_Meteorite_30k_u1_v1_normal.png
