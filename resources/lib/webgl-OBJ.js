@@ -65,7 +65,7 @@ OBJ = function(){
     });
 
     function calculateCentroid(){
-
+        // TODO: Create a function to adjust object center for the models that are not centered at the origin. This might be a tall task...
     }
 
     function verifyAttribute(attribute){
