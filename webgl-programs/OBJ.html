@@ -18,6 +18,7 @@
             gl_Position = projMatrix * modelMatrix * vec4(a_position, 1.0f);
             gl_PointSize = 10.0f;
             v_texCoord = a_texCoord;
+            v_color = modelMatrix * vec4(a_normal, 1.0);
         }
     </script>
 
@@ -34,13 +35,14 @@
         out vec4 FragColor;
 
         void main(){
-            FragColor = texture(uSampler_diffuse, v_texCoord);
+            FragColor = texture(uSampler_diffuse, v_texCoord) * texture(uSampler_AO, v_texCoord);
         }
     </script>
 
     <script type="text/javascript" src="../resources/lib/webgl-OBJ.js"></script>
     <script type="text/javascript" src="../resources/lib/webgl-primitives.js"></script>
     <script type="text/javascript" src="../resources/lib/webgl-3d.js"></script>
+    <script type="text/javascript" src="../resources/lib/webgl-quaternions.js"></script>
     <script type="text/javascript" src="../resources/lib/webgl-utils.js"></script>
     <script type="text/javascript" src="OBJ.js"></script>
 </head>

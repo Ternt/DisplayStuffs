@@ -12,6 +12,7 @@ async function main(){
     gl.enable(gl.CULL_FACE);
     gl.cullFace(gl.BACK);
     gl.frontFace(gl.CCW);
+    gl.viewport(0, 0, 600, 600);
     gl.clear(gl.COLOR_BUFFER_BIT);
 
     let   renderPrimtive                    = gl.TRIANGLES;
@@ -24,20 +25,12 @@ async function main(){
     const normalSamplerUniformLocation      = gl.getUniformLocation(shaderProgram, "uSampler_normal");
     const AOSamplerUniformLocation          = gl.getUniformLocation(shaderProgram, "uSampler_AO");
 
-    const dragon = {
-        buffer      : await OBJ.loadObject("/resources/models/dragon/dragon.obj"),
-    }
-    const dragonPillar = {
-        buffer      : await OBJ.loadObject("/resources/models/stonedragonpillar/stone_dragon_pillar-fixed.obj"),
-    }
     const meteorite = {
         buffer      : await OBJ.loadObject("/resources/models/meteor/Iron_Meteorite-fixed.obj"),
         diffuse     : await OBJ.loadImage("/resources/models/meteor/Iron_Meteorite-diffuse.png"),
         normal      : await OBJ.loadImage("/resources/models/meteor/Iron_Meteorite-normal.png"),
         ao          : await OBJ.loadImage("/resources/models/meteor/Iron_Meteorite-AO.png"),
     }
-
-    console.log(meteorite.buffer.byteLength);
 
     const vertexBufferObject = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBufferObject);
@@ -49,7 +42,7 @@ async function main(){
     gl.enableVertexAttribArray(normalAttributeLocation);
     gl.enableVertexAttribArray(texCoordAttributeLocation);
 
-    const transformation = m4.mult(m4.scale(0.08, 0.08, 0.08), m4.zRotate(0.0));
+    const transformation = m4.mult(m4.scale(0.08, 0.08, 0.08), m4.xRotate(90));
     gl.uniformMatrix4fv(projectionMatrixUniformLocation, false, m4.orthographic(-1, 1, -1, 1, -1, 1));
 
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
@@ -74,8 +67,9 @@ async function main(){
 
     configureImage(diffuseSamplerUniformLocation, 0, 8192, 8192, meteorite.diffuse);
     configureImage(normalSamplerUniformLocation, 1, 8192, 8192, meteorite.normal);
-    // configureImage(AOSamplerUniformLocation, 1, 4096, 4096, AO);
+    configureImage(AOSamplerUniformLocation, 1, 4096, 4096, meteorite.ao);
 
+    userInteractions();
     requestAnimationFrame(draw);
 
     let alpha = 0;
@@ -84,8 +78,33 @@ async function main(){
         gl.clear(gl.COLOR_BUFFER_BIT);
 
         alpha += 1;
-        gl.uniformMatrix4fv(modelMatrixUniformLocation, false, m4.mult(m4.yRotate(alpha), transformation));
+        gl.uniformMatrix4fv(modelMatrixUniformLocation, false, transformation);
         gl.drawArrays(gl.TRIANGLES, 0, count);
         requestAnimationFrame(draw);
+    }
+
+    // Allow user to rotate, translate, and scale object with mouse
+    function userInteractions(){
+        let clicked = false;
+        canvas.addEventListener("mousedown", (e) => {
+            clicked = true;
+            console.log(e);
+            canvas.addEventListener("mousemove", moveObject);
+        });
+
+        canvas.addEventListener("mouseup", (e) => {
+            clicked = false;
+            canvas.removeEventListener("mousemove", moveObject);
+        });
+
+        canvas.addEventListener("wheel", scaleObject);
+
+        function moveObject(event){
+            //console.log(event);
+        }
+
+        function scaleObject(event){
+            //console.log(event);
+        }
     }
 }
