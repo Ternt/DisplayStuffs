@@ -25,7 +25,10 @@ function main(){
     gl.vertexAttribPointer(positionLoc, 2, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(positionLoc);
 
-    const bufferInfo = primitive.createQuadBufferVertices(2);
+    // const frameBuffer = gl.createFramebuffer();
+    // gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer);
+
+    const bufferInfo = primitive.createCubeVertices(2);
     Log(bufferInfo);
     requestAnimationFrame(draw);
 
