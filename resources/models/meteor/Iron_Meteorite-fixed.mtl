@@ -1,0 +1,13 @@
+# Blender 3.5.1 MTL File: 'meteor.blend'
+# www.blender.org
+
+newmtl Iron_Meteorite_30k_u1_v1.001
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd Iron_Meteorite_u1_v1_diffuse.png
+map_Bump Iron_Meteorite_30k_u1_v1_normal.png
