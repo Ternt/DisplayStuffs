@@ -1,2 +1,2 @@
 # DisplayStuffs
-Recently, I took a course about Computer Graphics, learning webGL and Javascript. Seeing the opportunity, I wanted to revisit an older project of mine and apply everything I had learned since then.
+Recently, I took a course about Computer Graphics, learning webGL and Javascript. Wanting to continue my journey into computer graphics, I decided to create this project, which I thoughtfully called... *drumroll*... DisplayStuffs :).  
