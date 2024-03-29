@@ -25,6 +25,8 @@ async function main(){
     const normalSamplerUniformLocation      = gl.getUniformLocation(shaderProgram, "uSampler_normal");
     const AOSamplerUniformLocation          = gl.getUniformLocation(shaderProgram, "uSampler_AO");
 
+    // "Otumpa Mass | Meteoric Iron" by Thomas Flynn on sketchfab.
+    // Link: https://skfb.ly/oSu8L
     const meteorite = {
         buffer      : await OBJ.loadObject("/resources/models/meteor/Iron_Meteorite-fixed.obj"),
         diffuse     : await OBJ.loadImage("/resources/models/meteor/Iron_Meteorite-diffuse.png"),
@@ -78,7 +80,7 @@ async function main(){
         gl.clear(gl.COLOR_BUFFER_BIT);
 
         alpha += 1;
-        gl.uniformMatrix4fv(modelMatrixUniformLocation, false, transformation);
+        gl.uniformMatrix4fv(modelMatrixUniformLocation, false, m4.mult(m4.zRotate(alpha), transformation));
         gl.drawArrays(gl.TRIANGLES, 0, count);
         requestAnimationFrame(draw);
     }
@@ -88,7 +90,7 @@ async function main(){
         let clicked = false;
         canvas.addEventListener("mousedown", (e) => {
             clicked = true;
-            console.log(e);
+            //console.log(e);
             canvas.addEventListener("mousemove", moveObject);
         });
 
